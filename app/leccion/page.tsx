@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -16,7 +17,8 @@ interface Leccion {
     modulo_id: number;
 }
 
-export default function LeccionPage() {
+// 👇 Este componente contiene toda la lógica que usaba la página
+function LeccionContent() {
     const searchParams = useSearchParams();
     const id = searchParams.get('id');
     const router = useRouter();
@@ -139,5 +141,14 @@ export default function LeccionPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+// 👇 Este es el componente que exporta la página
+export default function LeccionPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-xl">Cargando...</div>}>
+            <LeccionContent />
+        </Suspense>
     );
 }
