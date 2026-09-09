@@ -4,8 +4,8 @@ import axios from 'axios';
 // Creamos una instancia de axios con configuración base
 // Todas las peticiones van a usar esta URL como base
 const api = axios.create({
-    // URL base de nuestra API Laravel
-    baseURL: 'http://localhost:8000/api',
+    // URL base de nuestra API Laravel (usa variable de entorno)
+    baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
     // Headers por defecto para todas las peticiones
     headers: {
         'Content-Type': 'application/json',  // Indicamos que enviamos JSON
