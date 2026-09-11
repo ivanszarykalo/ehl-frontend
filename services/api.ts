@@ -2,31 +2,28 @@
 import axios from 'axios';
 
 // Creamos una instancia de axios con configuración base
-// Todas las peticiones van a usar esta URL como base
 const api = axios.create({
-    // URL base de nuestra API Laravel (usa variable de entorno)
-    baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
-    // Headers por defecto para todas las peticiones
+    // URL base de nuestra API Laravel (hardcodeada para pruebas locales)
+    baseURL: `https://ehl-backend-production.up.railway.app/api`,
     headers: {
-        'Content-Type': 'application/json',  // Indicamos que enviamos JSON
-        'Accept': 'application/json',        // Esperamos respuesta JSON
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
     },
 });
+/*
+Guarda Ivan!
+Estamos harcodeando
+baseURL: `http://localhost:8000/api`,
+baseURL: `https://ehl-backend-production.up.railway.app/api`,
+*/
 
-// INTERCEPTOR: Se ejecuta ANTES de cada petición
-// Sirve para agregar el token automáticamente
+// Interceptor para agregar el token automáticamente
 api.interceptors.request.use((config) => {
-    // Buscamos el token en localStorage (lo guardamos al hacer login)
     const token = localStorage.getItem('token');
-    
-    // Si hay token, lo agregamos al header Authorization
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
-    
-    // Devolvemos la configuración modificada
     return config;
 });
 
-// Exportamos la instancia para usarla en toda la app
 export default api;
