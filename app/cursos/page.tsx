@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 // Importamos nuestra instancia personalizada de Axios desde api.ts.
 // Usar '@/...' es un atajo de Next.js (alias) que apunta directamente a la carpeta raíz del proyecto.
-import api from '@/lib/api';
+import api from '@/services/api';
 
 // --- INTERFACES DE TYPESCRIPT ---
 // TypeScript nos pide definir la "forma" que tienen los datos.
