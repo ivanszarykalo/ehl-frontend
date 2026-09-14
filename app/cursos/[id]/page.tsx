@@ -6,6 +6,23 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/services/api'; // Instancia centralizada de Axios para Railway
 
+interface Leccion {
+    id: number;
+    titulo: string;
+    descripcion: string | null;
+    video_url: string | null;
+    orden: number;
+    gratis: boolean;
+}
+
+interface Modulo {
+    id: number;
+    titulo: string;
+    orden: number;
+    semana: number;
+    lecciones: Leccion[];
+}
+
 interface Curso {
     id: number;
     titulo: string;
@@ -13,6 +30,7 @@ interface Curso {
     precio: number;
     preciopromo: number;
     imagen: string | null;
+    modulos?: Modulo[];
 }
 
 export default function CursoDetallePage() {
@@ -29,7 +47,6 @@ export default function CursoDetallePage() {
     useEffect(() => {
         if (!id) return;
         
-        // Reemplazamos el fetch a localhost por api.get()
         api.get(`/cursos/${id}`)
             .then(response => {
                 setCurso(response.data);
@@ -50,8 +67,6 @@ export default function CursoDetallePage() {
         
         setInscribiendo(true);
         try {
-            // Reemplazamos el fetch a localhost por api.post()
-            // Axios envía el token automáticamente gracias al interceptor de api.ts
             const response = await api.post(`/cursos/${id}/inscribir`);
             setMensaje(response.data.message || 'Inscripción exitosa');
             setTimeout(() => setMensaje(''), 3000);
@@ -75,7 +90,6 @@ export default function CursoDetallePage() {
         setComprando(true);
         try {
             const response = await api.post(`/cursos/${id}/checkout`);
-            // Redirigir a MercadoPago para pagar
             window.location.href = response.data.init_point;
         } catch (error) {
             console.error('Error al iniciar pago:', error);
@@ -135,6 +149,35 @@ export default function CursoDetallePage() {
                             </span>
                         )}
                     </div>
+
+                    {/* Programa del curso */}
+                    {curso.modulos && curso.modulos.length > 0 && (
+                        <div className="mb-8">
+                            <h2 className="text-2xl font-bold mb-4">Programa del curso</h2>
+                            <div className="space-y-4">
+                                {curso.modulos.map((modulo) => (
+                                    <div key={modulo.id} className="border rounded-lg p-4 bg-gray-50">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                                            {modulo.titulo}
+                                        </h3>
+                                        <ul className="space-y-1">
+                                            {modulo.lecciones.map((leccion) => (
+                                                <li key={leccion.id} className="text-gray-600 text-sm flex items-start gap-2">
+                                                    <span className="text-gray-400">•</span>
+                                                    <span>{leccion.titulo}</span>
+                                                    {leccion.gratis && (
+                                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-auto">
+                                                            Gratis
+                                                        </span>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     
                     {/* Mensaje de éxito/error */}
                     {mensaje && (
