@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import api from '@/services/api';  // 🔹 Necesitamos api para llamar al checkout
+import api from '@/services/api'; // Instancia centralizada de Axios para Railway
 
 interface Curso {
     id: number;
@@ -23,27 +23,25 @@ export default function CursoDetallePage() {
     const [loading, setLoading] = useState(true);
     const [inscribiendo, setInscribiendo] = useState(false);
     const [mensaje, setMensaje] = useState('');
-    const [comprando, setComprando] = useState(false);  // 🔹 Estado para el botón de compra
+    const [comprando, setComprando] = useState(false);
 
-    // Cargar datos del curso
+    // 1. Cargar datos del curso usando nuestra instancia 'api'
     useEffect(() => {
         if (!id) return;
         
-        fetch(`http://localhost:8000/api/cursos/${id}`, {
-            headers: { 'Accept': 'application/json' }
-        })
-            .then(res => res.json())
-            .then(data => {
-                setCurso(data);
+        // Reemplazamos el fetch a localhost por api.get()
+        api.get(`/cursos/${id}`)
+            .then(response => {
+                setCurso(response.data);
                 setLoading(false);
             })
             .catch(err => {
-                console.error(err);
+                console.error('Error al cargar detalle del curso:', err);
                 setLoading(false);
             });
     }, [id]);
 
-    // Función para inscribirse (pago manual, sin MercadoPago)
+    // 2. Función para inscribirse manualmente usando 'api'
     const handleInscribirse = async () => {
         if (!token) {
             router.push('/login');
@@ -52,26 +50,22 @@ export default function CursoDetallePage() {
         
         setInscribiendo(true);
         try {
-            const res = await fetch(`http://localhost:8000/api/cursos/${id}/inscribir`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            const data = await res.json();
-            setMensaje(data.message);
+            // Reemplazamos el fetch a localhost por api.post()
+            // Axios envía el token automáticamente gracias al interceptor de api.ts
+            const response = await api.post(`/cursos/${id}/inscribir`);
+            setMensaje(response.data.message || 'Inscripción exitosa');
             setTimeout(() => setMensaje(''), 3000);
-        } catch (error) {
-            setMensaje('Error al inscribirte. Intentalo nuevamente.');
+        } catch (error: any) {
+            console.error('Error al inscribir:', error);
+            const msg = error.response?.data?.message || 'Error al inscribirte. Intentalo nuevamente.';
+            setMensaje(msg);
             setTimeout(() => setMensaje(''), 3000);
         } finally {
             setInscribiendo(false);
         }
     };
 
-    // 🆕 Función para comprar con MercadoPago
+    // 3. Función para comprar con MercadoPago
     const handleComprar = async () => {
         if (!token) {
             router.push('/login');
@@ -145,7 +139,7 @@ export default function CursoDetallePage() {
                     {/* Mensaje de éxito/error */}
                     {mensaje && (
                         <p className={`mb-4 text-center ${
-                            mensaje.includes('correctamente') || mensaje.includes('inscrito') 
+                            mensaje.includes('correctamente') || mensaje.includes('inscrito') || mensaje.includes('exitosa')
                                 ? 'text-green-600' 
                                 : 'text-red-600'
                         }`}>
@@ -153,7 +147,7 @@ export default function CursoDetallePage() {
                         </p>
                     )}
                     
-                    {/* 🆕 Botón de compra con MercadoPago */}
+                    {/* Botón de compra con MercadoPago */}
                     <button 
                         onClick={handleComprar}
                         disabled={comprando}
@@ -162,7 +156,7 @@ export default function CursoDetallePage() {
                         {comprando ? 'Preparando pago...' : 'Comprar ahora'}
                     </button>
                     
-                    {/* Botón de inscripción manual (opcional, podés borrarlo si querés solo compra) */}
+                    {/* Botón de inscripción manual */}
                     <button 
                         onClick={handleInscribirse}
                         disabled={inscribiendo}
