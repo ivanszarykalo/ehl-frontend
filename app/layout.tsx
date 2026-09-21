@@ -4,7 +4,8 @@
 // =====================================================
 
 import type { Metadata } from "next";
-import { Montserrat, Bebas_Neue } from "next/font/google";
+import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import { AuthProvider } from '@/context/AuthContext';
 import "./globals.css";
 import Navbar from './components/Navbar';
@@ -19,11 +20,32 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
-// Bebas Neue: reemplazo temporal de Lemmon Milk (hasta tener el archivo)
-const bebas = Bebas_Neue({
-  weight: "400",
+// Lemmon Milk: fuente local para títulos (4 variantes)
+const lemonMilk = localFont({
+  src: [
+    {
+      path: "./fonts/LEMONMILK-LIGHT.OTF",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "./fonts/LEMONMILK-REGULAR.OTF",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/LEMONMILK-MEDIUM.OTF",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/LEMONMILK-BOLD.OTF",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-lemmon",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 // =====================================================
@@ -47,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${montserrat.variable} ${bebas.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${lemonMilk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-montserrat bg-ehl-bg text-ehl-dark">
         <AuthProvider>
