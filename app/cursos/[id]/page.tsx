@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import api from '@/services/api'; // Instancia centralizada de Axios para Railway
+import api from '@/services/api';
 
 interface Leccion {
     id: number;
@@ -42,8 +42,8 @@ export default function CursoDetallePage() {
     const [inscribiendo, setInscribiendo] = useState(false);
     const [mensaje, setMensaje] = useState('');
     const [comprando, setComprando] = useState(false);
+    const [moduloAbierto, setModuloAbierto] = useState<number | null>(null);
 
-    // 1. Cargar datos del curso usando nuestra instancia 'api'
     useEffect(() => {
         if (!id) return;
         
@@ -58,7 +58,6 @@ export default function CursoDetallePage() {
             });
     }, [id]);
 
-    // 2. Función para inscribirse manualmente usando 'api'
     const handleInscribirse = async () => {
         if (!token) {
             router.push('/login');
@@ -80,7 +79,6 @@ export default function CursoDetallePage() {
         }
     };
 
-    // 3. Función para comprar con MercadoPago
     const handleComprar = async () => {
         if (!token) {
             router.push('/login');
@@ -102,7 +100,7 @@ export default function CursoDetallePage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <p className="text-xl">Cargando curso...</p>
+                <p className="text-xl font-montserrat">Cargando curso...</p>
             </div>
         );
     }
@@ -110,111 +108,127 @@ export default function CursoDetallePage() {
     if (!curso) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <p className="text-xl">Curso no encontrado</p>
+                <p className="text-xl font-montserrat">Curso no encontrado</p>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto p-4 max-w-3xl">
-            <Link href="/cursos">
-                <button className="mb-6 text-blue-500 hover:underline flex items-center gap-1">
-                    ← Volver a cursos
-                </button>
-            </Link>
-            
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                {curso.imagen && (
-                    <img 
-                        src={curso.imagen} 
-                        alt={curso.titulo}
-                        className="w-full h-64 object-cover"
-                    />
-                )}
-                
-                <div className="p-6">
-                    <h1 className="text-3xl font-bold mb-4">{curso.titulo}</h1>
-                    
-                    <p className="text-gray-700 mb-6 text-lg">
-                        {curso.descripcion || 'Sin descripción'}
+        <div className="min-h-screen bg-ehl-bg">
+            {/* Hero */}
+            <section className="relative w-full h-[400px] md:h-[600px]">
+                <img
+                    src="/images/header-curso-1.png"
+                    alt={curso.titulo}
+                    className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-ehl-dark/70"></div>
+                <div className="relative z-10 container mx-auto h-full flex flex-col justify-center px-6">
+                    <h1 className="font-lemmon text-4xl md:text-6xl text-white mb-4 uppercase">
+                        {curso.titulo}
+                    </h1>
+                    <p className="font-montserrat text-lg text-white/90 max-w-2xl">
+                        {curso.descripcion}
                     </p>
-                    
-                    <div className="mb-6">
-                        <span className="text-3xl font-bold text-green-600">
-                            ${curso.preciopromo}
-                        </span>
-                        {curso.precio > curso.preciopromo && (
-                            <span className="line-through text-gray-500 ml-3 text-lg">
-                                ${curso.precio}
-                            </span>
-                        )}
-                    </div>
+                </div>
+            </section>
 
-                    {/* Programa del curso */}
-                    {curso.modulos && curso.modulos.length > 0 && (
-                        <div className="mb-8">
-                            <h2 className="text-2xl font-bold mb-4">Programa del curso</h2>
-                            <div className="space-y-4">
-                                {curso.modulos.map((modulo) => (
-                                    <div key={modulo.id} className="border rounded-lg p-4 bg-gray-50">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                                            {modulo.titulo}
-                                        </h3>
-                                        <ul className="space-y-1">
+            {/* Contenido */}
+            <div className="container mx-auto px-6 py-12 max-w-4xl">
+                {/* Precio */}
+                <div className="mb-8">
+                    <span className="font-lemmon text-4xl text-ehl-dark">
+                        ${curso.preciopromo}
+                    </span>
+                </div>
+
+                {/* Acordeón de módulos */}
+                {curso.modulos && curso.modulos.length > 0 && (
+                    <div className="mb-8">
+                        <h2 className="font-lemmon text-3xl text-ehl-dark mb-6 uppercase">
+                            Programa del curso
+                        </h2>
+                        <div className="space-y-2">
+                            {curso.modulos.map((modulo) => (
+                                <div key={modulo.id}>
+                                    {/* Header del módulo */}
+                                    <button
+                                        onClick={() => setModuloAbierto(
+                                            moduloAbierto === modulo.id ? null : modulo.id
+                                        )}
+                                        className="w-full bg-ehl-dark text-white px-6 py-4 flex items-center justify-between hover:bg-ehl-medium transition"
+                                    >
+                                        <div className="flex items-center gap-6 text-left">
+                                            <span className="font-lemmon text-3xl md:text-4xl">
+                                                MÓDULO {modulo.orden}
+                                            </span>
+                                            <div className="font-montserrat">
+                                                <p className="text-sm opacity-80">{modulo.titulo}</p>
+                                            </div>
+                                        </div>
+                                        <span className="font-montserrat text-sm uppercase">
+                                            {moduloAbierto === modulo.id ? 'Contraer' : 'Expandir'} →
+                                        </span>
+                                    </button>
+
+                                    {/* Lecciones (si está abierto) */}
+                                    {moduloAbierto === modulo.id && (
+                                        <div className="bg-ehl-medium">
                                             {modulo.lecciones.map((leccion) => (
-                                                <li key={leccion.id} className="text-gray-600 text-sm flex items-start gap-2">
-                                                    <span className="text-gray-400">•</span>
-                                                    <span>{leccion.titulo}</span>
-                                                    {leccion.gratis && (
-                                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-auto">
-                                                            Gratis
-                                                        </span>
-                                                    )}
-                                                </li>
+                                                <div
+                                                    key={leccion.id}
+                                                    className="border-t border-white/20 px-6 py-4 flex items-center justify-between"
+                                                >
+                                                    <span className="font-montserrat text-white">
+                                                        {leccion.titulo}
+                                                    </span>
+                                                    <span className="font-montserrat text-sm text-white/70 uppercase">
+                                                        Expandir →
+                                                    </span>
+                                                </div>
                                             ))}
-                                        </ul>
-                                    </div>
-                                ))}
-                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
-                    )}
-                    
-                    {/* Mensaje de éxito/error */}
-                    {mensaje && (
-                        <p className={`mb-4 text-center ${
-                            mensaje.includes('correctamente') || mensaje.includes('inscrito') || mensaje.includes('exitosa')
-                                ? 'text-green-600' 
-                                : 'text-red-600'
-                        }`}>
-                            {mensaje}
-                        </p>
-                    )}
-                    
-                    {/* Botón de compra con MercadoPago */}
+                    </div>
+                )}
+
+                {/* Mensaje */}
+                {mensaje && (
+                    <p className={`mb-4 text-center font-montserrat ${
+                        mensaje.includes('correctamente') || mensaje.includes('inscrito') || mensaje.includes('exitosa')
+                            ? 'text-green-600' 
+                            : 'text-red-600'
+                    }`}>
+                        {mensaje}
+                    </p>
+                )}
+
+                {/* Botones */}
+                <div className="space-y-3">
                     <button 
                         onClick={handleComprar}
                         disabled={comprando}
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 mb-3"
+                        className="w-full bg-ehl-dark text-white py-4 font-lemmon text-lg uppercase hover:bg-ehl-medium transition disabled:opacity-50"
                     >
                         {comprando ? 'Preparando pago...' : 'Comprar ahora'}
                     </button>
-                    
-                    {/* Botón de inscripción manual */}
                     <button 
                         onClick={handleInscribirse}
                         disabled={inscribiendo}
-                        className="w-full bg-green-500 text-white py-3 rounded-lg font-semibold hover:bg-green-600 transition disabled:opacity-50"
+                        className="w-full border-2 border-ehl-dark text-ehl-dark py-4 font-lemmon text-lg uppercase hover:bg-ehl-dark hover:text-white transition disabled:opacity-50"
                     >
-                        {inscribiendo ? 'Procesando...' : 'Inscribirme (manual)'}
+                        {inscribiendo ? 'Procesando...' : 'Inscribirme'}
                     </button>
-                    
-                    {/* Aviso si no está logueado */}
-                    {!user && (
-                        <p className="text-center text-gray-500 text-sm mt-4">
-                            Necesitás iniciar sesión para comprar o inscribirte
-                        </p>
-                    )}
                 </div>
+
+                {!user && (
+                    <p className="text-center text-gray-500 text-sm mt-4 font-montserrat">
+                        Necesitás iniciar sesión para comprar o inscribirte
+                    </p>
+                )}
             </div>
         </div>
     );
