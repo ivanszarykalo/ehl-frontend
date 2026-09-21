@@ -24,22 +24,22 @@ const montserrat = Montserrat({
 const lemonMilk = localFont({
   src: [
     {
-      path: "./fonts/LEMONMILK-LIGHT.OTF",
+      path: "./fonts/lemonmilk-light.otf",
       weight: "300",
       style: "normal",
     },
     {
-      path: "./fonts/LEMONMILK-REGULAR.OTF",
+      path: "./fonts/lemonmilk-regular.otf",
       weight: "400",
       style: "normal",
     },
     {
-      path: "./fonts/LEMONMILK-MEDIUM.OTF",
+      path: "./fonts/lemonmilk-medium.otf",
       weight: "500",
       style: "normal",
     },
     {
-      path: "./fonts/LEMONMILK-BOLD.OTF",
+      path: "./fonts/lemonmilk-bold.otf",
       weight: "700",
       style: "normal",
     },
