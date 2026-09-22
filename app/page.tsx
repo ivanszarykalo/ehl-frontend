@@ -1,3 +1,12 @@
+import { redirect } from 'next/navigation';
+
+export default function Home() {
+  redirect('/cursos/4');
+}
+/*
+En el futuro vamos a poner la home page aca.
+Ahora esta comentariada porque la vamos a poner despues
+
 import Image from "next/image";
 
 export default function Home() {
@@ -63,3 +72,4 @@ export default function Home() {
     </div>
   );
 }
+*/

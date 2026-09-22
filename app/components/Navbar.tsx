@@ -29,7 +29,7 @@ export default function Navbar() {
                 {/* Menú de navegación */}
                 <ul className="hidden md:flex items-center gap-8 font-montserrat text-sm uppercase tracking-wide text-ehl-dark">
                     <li>
-                        <Link href="/cursos" className="hover:text-ehl-medium transition">
+                        <Link href="/cursos/4" className="hover:text-ehl-medium transition">
                             Cursos
                         </Link>
                     </li>
