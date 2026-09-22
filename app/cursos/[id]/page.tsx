@@ -44,6 +44,7 @@ export default function CursoDetallePage() {
     const [mensaje, setMensaje] = useState('');
     const [comprando, setComprando] = useState(false);
     const [moduloAbierto, setModuloAbierto] = useState<number | null>(null);
+    const [leccionBloqueada, setLeccionBloqueada] = useState<number | null>(null);
 
     useEffect(() => {
         if (!id) return;
@@ -69,7 +70,6 @@ export default function CursoDetallePage() {
         try {
             const response = await api.post(`/cursos/${id}/inscribir`);
             setMensaje(response.data.message || 'Inscripción exitosa');
-            // Recargar el curso para actualizar el campo 'inscripto'
             const cursoActualizado = await api.get(`/cursos/${id}`);
             setCurso(cursoActualizado.data);
             setTimeout(() => setMensaje(''), 3000);
@@ -98,6 +98,15 @@ export default function CursoDetallePage() {
             alert('Hubo un error al procesar el pago. Intentalo nuevamente.');
         } finally {
             setComprando(false);
+        }
+    };
+
+    const handleLeccionClick = (leccionId: number) => {
+        if (curso?.inscripto) {
+            router.push(`/leccion?id=${leccionId}`);
+        } else {
+            setLeccionBloqueada(leccionId);
+            setTimeout(() => setLeccionBloqueada(null), 3000);
         }
     };
 
@@ -155,57 +164,42 @@ export default function CursoDetallePage() {
                         <div className="space-y-2">
                             {curso.modulos.map((modulo) => (
                                 <div key={modulo.id}>
-                                    {/* Header del módulo: clickeable si está inscripto */}
-                                    {curso.inscripto ? (
-                                        <button
-                                            onClick={() => setModuloAbierto(
-                                                moduloAbierto === modulo.id ? null : modulo.id
-                                            )}
-                                            className="w-full bg-ehl-dark text-white px-6 py-4 flex items-center justify-between hover:bg-ehl-medium transition"
-                                        >
-                                            <div className="flex items-center gap-6 text-left">
-                                                <span className="font-lemmon text-3xl md:text-4xl">
-                                                    MÓDULO {modulo.orden}
-                                                </span>
-                                                <div className="font-montserrat">
-                                                    <p className="text-sm opacity-80">{modulo.titulo}</p>
-                                                </div>
-                                            </div>
-                                            <span className="font-montserrat text-sm uppercase">
-                                                {moduloAbierto === modulo.id ? 'Contraer' : 'Expandir'} →
+                                    {/* Header del módulo (siempre clickeable) */}
+                                    <button
+                                        onClick={() => setModuloAbierto(
+                                            moduloAbierto === modulo.id ? null : modulo.id
+                                        )}
+                                        className="w-full bg-ehl-dark text-white px-6 py-4 flex items-center justify-between hover:bg-ehl-medium transition"
+                                    >
+                                        <div className="flex items-center gap-6 text-left">
+                                            <span className="font-lemmon text-3xl md:text-4xl">
+                                                MÓDULO {modulo.orden}
                                             </span>
-                                        </button>
-                                    ) : (
-                                        <div className="w-full bg-ehl-dark text-white px-6 py-4 flex items-center justify-between">
-                                            <div className="flex items-center gap-6 text-left">
-                                                <span className="font-lemmon text-3xl md:text-4xl">
-                                                    MÓDULO {modulo.orden}
-                                                </span>
-                                                <div className="font-montserrat">
-                                                    <p className="text-sm opacity-80">{modulo.titulo}</p>
-                                                </div>
+                                            <div className="font-montserrat">
+                                                <p className="text-sm opacity-80">{modulo.titulo}</p>
                                             </div>
                                         </div>
-                                    )}
+                                        <span className="font-montserrat text-sm uppercase">
+                                            {moduloAbierto === modulo.id ? 'Contraer' : 'Expandir'} →
+                                        </span>
+                                    </button>
 
-                                    {/* Lecciones (solo si está inscripto y el módulo está abierto) */}
-                                    {curso.inscripto && moduloAbierto === modulo.id && (
+                                    {/* Lecciones (siempre visibles al expandir el módulo) */}
+                                    {moduloAbierto === modulo.id && (
                                         <div className="bg-ehl-medium">
                                             {modulo.lecciones.map((leccion) => (
-                                                <div
+                                                <button
                                                     key={leccion.id}
-                                                    className="border-t border-white/20 px-6 py-4 flex items-center justify-between"
+                                                    onClick={() => handleLeccionClick(leccion.id)}
+                                                    className="w-full border-t border-white/20 px-6 py-4 flex items-center justify-between hover:bg-ehl-dark/50 transition text-left"
                                                 >
                                                     <span className="font-montserrat text-white">
                                                         {leccion.titulo}
                                                     </span>
-                                                    <Link
-                                                        href={`/leccion?id=${leccion.id}`}
-                                                        className="font-montserrat text-sm text-white/70 uppercase hover:text-white transition"
-                                                    >
-                                                        Ver →
-                                                    </Link>
-                                                </div>
+                                                    <span className="font-montserrat text-sm text-white/70 uppercase">
+                                                        {curso.inscripto ? 'Ver →' : '🔒'}
+                                                    </span>
+                                                </button>
                                             ))}
                                         </div>
                                     )}
@@ -215,16 +209,25 @@ export default function CursoDetallePage() {
                     </div>
                 )}
 
-                {/* Mensaje para no inscriptos */}
-                {!curso.inscripto && (
+                {/* Mensaje cuando intenta acceder a una lección sin estar inscripto */}
+                {leccionBloqueada && (
                     <div className="bg-ehl-light p-6 text-center mb-8">
                         <p className="font-montserrat text-ehl-dark">
-                            Inscribite para acceder a las lecciones del curso.
+                            Inscribite para acceder al contenido de esta lección.
                         </p>
                     </div>
                 )}
 
-                {/* Mensaje */}
+                {/* Mensaje para no inscriptos */}
+                {!curso.inscripto && (
+                    <div className="bg-ehl-light p-6 text-center mb-8">
+                        <p className="font-montserrat text-ehl-dark">
+                            Inscribite para acceder al contenido completo de las lecciones.
+                        </p>
+                    </div>
+                )}
+
+                {/* Mensaje de éxito/error */}
                 {mensaje && (
                     <p className={`mb-4 text-center font-montserrat ${
                         mensaje.includes('correctamente') || mensaje.includes('inscrito') || mensaje.includes('exitosa')
