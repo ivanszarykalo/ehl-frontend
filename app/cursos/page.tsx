@@ -1,3 +1,11 @@
+import { redirect } from 'next/navigation';
+
+export default function CursosPage() {
+  redirect('/cursos/4');
+}
+
+/*
+
 // 'use client' le avisa a Next.js (App Router) que este componente se ejecuta en el navegador del usuario.
 // Es obligatorio siempre que necesites interactuar con el cliente (usar useState, useEffect, eventos de click, etc.).
 'use client';
@@ -71,7 +79,7 @@ export default function CursosPage() {
             {/* Grilla responsive con Tailwind CSS:
                 - Mobile: 1 columna (grid-cols-1)
                 - Pantallas medianas/Tablet: 2 columnas (md:grid-cols-2)
-                - Pantallas grandes/Desktop: 3 columnas (lg:grid-cols-3) */}
+                - Pantallas grandes/Desktop: 3 columnas (lg:grid-cols-3) *//*}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 {/* RECORRIDO DEL ARRAY (.map):
@@ -83,23 +91,23 @@ export default function CursosPage() {
                     <div key={curso.id} className="border rounded-lg p-4 shadow">
                         <h2 className="text-xl font-semibold">{curso.titulo}</h2>
                         
-                        {/* Operador OR (||): Si curso.descripcion viene nulo o vacío, muestra 'Sin descripción' */}
+                        {/* Operador OR (||): Si curso.descripcion viene nulo o vacío, muestra 'Sin descripción' *//*}
                         <p className="text-gray-600 mt-2">{curso.descripcion || 'Sin descripción'}</p>
                         
                         <div className="mt-4">
-                            {/* Precio promocional/final */}
+                            {/* Precio promocional/final *//*}
                             <span className="text-2xl font-bold text-green-600">${curso.preciopromo}</span>
                             
                             {/* RENDERIZADO CONDICIONAL CON '&&':
                                 Si el precio original es mayor al promocional, mostramos el precio tachado.
-                                Si no hay descuento, esta parte directamente no se dibuja en el HTML. */}
+                                Si no hay descuento, esta parte directamente no se dibuja en el HTML. *//*}
                             {curso.precio > curso.preciopromo && (
                                 <span className="line-through text-gray-500 ml-2">${curso.precio}</span>
                             )}
                         </div>
 
                         {/* Navegación dinámica hacia el detalle del curso usando Template Literals (`...`)
-                            Redirige por ejemplo a: /cursos/1, /cursos/2, etc. */}
+                            Redirige por ejemplo a: /cursos/1, /cursos/2, etc. *//*}
                         <Link href={`/cursos/${curso.id}`}>
                             <button className="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
                                 Ver curso
@@ -111,3 +119,5 @@ export default function CursosPage() {
         </div>
     );
 }
+
+*/
