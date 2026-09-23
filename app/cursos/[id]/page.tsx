@@ -238,23 +238,34 @@ export default function CursoDetallePage() {
                     </p>
                 )}
 
-                {/* Botones */}
-                <div className="space-y-3">
-                    <button 
-                        onClick={handleComprar}
-                        disabled={comprando}
-                        className="w-full bg-ehl-dark text-white py-4 font-lemmon text-lg uppercase hover:bg-ehl-medium transition disabled:opacity-50"
-                    >
-                        {comprando ? 'Preparando pago...' : 'Comprar ahora'}
-                    </button>
-                    <button 
-                        onClick={handleInscribirse}
-                        disabled={inscribiendo}
-                        className="w-full border-2 border-ehl-dark text-ehl-dark py-4 font-lemmon text-lg uppercase hover:bg-ehl-dark hover:text-white transition disabled:opacity-50"
-                    >
-                        {inscribiendo ? 'Procesando...' : 'Inscribirme'}
-                    </button>
-                </div>
+                {/* Botones (solo si NO está inscripto) */}
+                {!curso.inscripto && (
+                    <div className="space-y-3">
+                        <button 
+                            onClick={handleComprar}
+                            disabled={comprando}
+                            className="w-full bg-ehl-dark text-white py-4 font-lemmon text-lg uppercase hover:bg-ehl-medium transition disabled:opacity-50"
+                        >
+                            {comprando ? 'Preparando pago...' : 'Comprar ahora'}
+                        </button>
+                        <button 
+                            onClick={handleInscribirse}
+                            disabled={inscribiendo}
+                            className="w-full border-2 border-ehl-dark text-ehl-dark py-4 font-lemmon text-lg uppercase hover:bg-ehl-dark hover:text-white transition disabled:opacity-50"
+                        >
+                            {inscribiendo ? 'Procesando...' : 'Inscribirme'}
+                        </button>
+                    </div>
+                )}
+
+                {/* Mensaje si ya está inscripto */}
+                {curso.inscripto && (
+                    <div className="bg-ehl-light p-6 text-center">
+                        <p className="font-montserrat text-ehl-dark">
+                            ✓ Ya estás inscripto en este curso. Podés acceder a todas las lecciones.
+                        </p>
+                    </div>
+                )}
 
                 {!user && (
                     <p className="text-center text-gray-500 text-sm mt-4 font-montserrat">
