@@ -83,11 +83,11 @@ export default function CursosPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 {/* RECORRIDO DEL ARRAY (.map):
-                    Convertimos la lista de objetos 'cursos' en elementos visuales JSX. */}
+                    Convertimos la lista de objetos 'cursos' en elementos visuales JSX. *//*}
                 {cursos.map(curso => (
                     
                     /* OJO: React nos exige colocar la propiedad 'key' única en el elemento padre 
-                       cuando iteramos con .map() para poder rastrear los cambios eficientemente. */
+                       cuando iteramos con .map() para poder rastrear los cambios eficientemente. *//*
                     <div key={curso.id} className="border rounded-lg p-4 shadow">
                         <h2 className="text-xl font-semibold">{curso.titulo}</h2>
                         
