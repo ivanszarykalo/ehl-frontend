@@ -19,7 +19,8 @@ export default function LoginPage() {
         e.preventDefault();           // Evitamos que recargue la página
         try {
             await login(email, password);
-            router.push('/mis-cursos');  // Redirigimos a sus cursos
+            //router.push('/mis-cursos');  // Redirigimos a sus cursos
+            router.push('/cursos/4');  // Redirigimos a sus cursos
         } catch (err) {
             setError('Email o contraseña incorrectos');
         }
