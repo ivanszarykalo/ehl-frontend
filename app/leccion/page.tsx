@@ -59,7 +59,7 @@ function LeccionContent() {
         try {
             await api.post(`/lecciones/${id}/progreso`);
             setMarcada(true);
-            setTimeout(() => setMarcada(false), 3000);
+            //setTimeout(() => setMarcada(false), 3000);
         } catch (error) {
             console.error('Error al marcar progreso:', error);
             alert('Error al marcar la lección como vista');
