@@ -23,6 +23,19 @@ interface Leccion {
     modulo_id: number;
 }
 
+// Función para asegurarse de que Vimeo use la URL del reproductor
+const formatVideoUrl = (url: string | null) => {
+    if (!url) return '';
+    // Si ya tiene el formato correcto, la devolvemos tal cual
+    if (url.includes('player.vimeo.com')) return url;
+    // Si es una URL normal de Vimeo (vimeo.com/ID), la convertimos al player
+    if (url.includes('vimeo.com/')) {
+        const id = url.split('vimeo.com/')[1];
+        return `https://player.vimeo.com/video/${id}`;
+    }
+    return url;
+};
+
 export default function LeccionDetallePage() {
     const { id } = useParams();
 
@@ -116,11 +129,12 @@ export default function LeccionDetallePage() {
             )}
 
             {leccion.video_url ? (
-                <div className="aspect-video mb-6">
+                <div className="aspect-video mb-6 bg-gray-100 rounded-lg overflow-hidden">
                     <iframe
-                        src={leccion.video_url}
+                        src={formatVideoUrl(leccion.video_url)}
                         title={leccion.titulo}
-                        className="w-full h-full rounded-lg"
+                        className="w-full h-full"
+                        allow="autoplay; fullscreen; picture-in-picture"
                         allowFullScreen
                     />
                 </div>
