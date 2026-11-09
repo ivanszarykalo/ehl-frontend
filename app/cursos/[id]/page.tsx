@@ -103,7 +103,8 @@ export default function CursoDetallePage() {
 
     const handleLeccionClick = (leccionId: number) => {
         if (curso?.inscripto) {
-            router.push(`/leccion?id=${leccionId}`);
+            // CORREGIDO: Ahora apunta a la ruta dinámica nueva
+            router.push(`/lecciones/${leccionId}`);
         } else {
             setLeccionBloqueada(leccionId);
             setTimeout(() => setLeccionBloqueada(null), 3000);
